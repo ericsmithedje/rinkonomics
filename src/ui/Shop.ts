@@ -11,6 +11,7 @@ export class Shop {
     document.addEventListener('gameloop:tick', () => {
       this.updateAffordability();
     });
+    document.addEventListener('gamestate:purchase', () => this.render());
     document.addEventListener('gamestate:milestone', () => this.render());
     document.addEventListener('gamestate:prestige', () => this.render());
   }

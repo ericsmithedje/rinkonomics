@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { GameState } from '../../src/game/GameState';
 
 describe('GameState — core mutations', () => {
@@ -55,6 +55,34 @@ describe('GameState — core mutations', () => {
     state.pucks = 5;
     state.spendPucks(10);
     expect(state.pucks).toBe(5); // unchanged — failed spend
+  });
+
+  it('buyUpgrade deducts puck cost from balance', () => {
+    state.pucks = 500;
+    state.totalClicks = 10;
+    state.checkUpgradeUnlocks();
+    state.buyUpgrade('composite-stick'); // costs 100
+    expect(state.pucks).toBeCloseTo(400);
+  });
+
+  it('buyUpgrade dispatches gamestate:purchase event', () => {
+    state.pucks = 500;
+    state.totalClicks = 10;
+    state.checkUpgradeUnlocks();
+    const listener = vi.fn();
+    document.addEventListener('gamestate:purchase', listener, { once: true });
+    state.buyUpgrade('composite-stick');
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('buyUpgrade returns false and does not deduct pucks when unaffordable', () => {
+    state.pucks = 50; // composite-stick costs 100
+    state.totalClicks = 10;
+    state.checkUpgradeUnlocks();
+    const result = state.buyUpgrade('composite-stick');
+    expect(result).toBe(false);
+    expect(state.pucks).toBe(50);
+    expect(state.purchasedUpgrades.has('composite-stick')).toBe(false);
   });
 });
 

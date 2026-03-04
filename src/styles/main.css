@@ -1,0 +1,474 @@
+/* ===== CSS Reset & Variables ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ice: #d6eaf8;
+  --rink-blue: #1a3a5c;
+  --rink-mid: #215a8c;
+  --gold: #f0c040;
+  --red: #c0392b;
+  --text: #e8f4fd;
+  --text-dim: #8ab4d0;
+  --panel-bg: rgba(21, 45, 70, 0.95);
+  --border: rgba(100, 180, 240, 0.2);
+  --afford: #27ae60;
+  --unafford: #555;
+  --locked: #2c3e50;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0a1929;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ===== Stats Bar ===== */
+#stats-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.6rem 1.5rem;
+  background: var(--rink-blue);
+  border-bottom: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+
+#stats-bar .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+}
+
+#stats-bar .stat-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#stats-bar .stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ice);
+}
+
+#stats-bar .prestige-badge {
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+/* ===== Game Layout ===== */
+#game-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px 280px;
+  grid-template-rows: auto;
+  min-height: calc(100vh - 56px - 60px);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* ===== Click Area ===== */
+#click-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 300px;
+}
+
+#puck {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 6px solid #555;
+  background: radial-gradient(circle at 35% 35%, #555, #111);
+  cursor: pointer;
+  font-size: 4rem;
+  transition: transform 0.08s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+#puck:active {
+  transform: scale(0.92);
+}
+
+#puck:hover {
+  box-shadow: 0 8px 40px rgba(100, 180, 240, 0.3);
+}
+
+.click-float {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  pointer-events: none;
+  animation: float-up 0.9s ease forwards;
+}
+
+@keyframes float-up {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
+}
+
+.welcome-tooltip {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background: var(--rink-mid);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ===== Shop ===== */
+#shop {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 130px);
+}
+
+#shop h2, #upgrades-panel h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.generator-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.4rem;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  background: rgba(255,255,255,0.03);
+  transition: background 0.15s;
+}
+
+.generator-row:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.generator-info .gen-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.generator-info .gen-detail {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.generator-count {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* ===== Buttons ===== */
+button.buy-btn {
+  padding: 0.35rem 0.7rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+button.buy-btn:not(:disabled) {
+  background: var(--afford);
+  color: white;
+}
+
+button.buy-btn:disabled,
+button.buy-btn.unaffordable {
+  background: var(--unafford);
+  color: #888;
+  cursor: not-allowed;
+}
+
+.locked {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ===== Upgrades Panel ===== */
+#upgrades-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 130px);
+}
+
+.upgrade-card {
+  padding: 0.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.upgrade-card:hover:not(.unaffordable) {
+  background: rgba(100, 180, 240, 0.1);
+}
+
+.upgrade-card .upg-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.upgrade-card .upg-desc {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 0.2rem;
+}
+
+.upgrade-card .upg-cost {
+  font-size: 0.75rem;
+  color: var(--gold);
+  margin-top: 0.25rem;
+}
+
+/* ===== Milestone Display ===== */
+#milestone-display {
+  padding: 0.6rem 1.5rem;
+  background: var(--rink-blue);
+  border-top: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.milestone-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.milestone-progress-wrap {
+  flex: 1;
+  min-width: 120px;
+}
+
+.milestone-progress-bar {
+  height: 6px;
+  background: #1a3a5c;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 3px;
+}
+
+.milestone-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rink-mid), var(--gold));
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.milestone-next {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+/* ===== Prestige Area ===== */
+#prestige-area {
+  position: fixed;
+  bottom: 70px;
+  right: 1.5rem;
+}
+
+#new-season-btn {
+  padding: 0.7rem 1.4rem;
+  background: linear-gradient(135deg, #8e24aa, #1565c0);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(142, 36, 170, 0.4);
+  animation: glow 2s infinite;
+  display: none;
+}
+
+#new-season-btn.visible {
+  display: block;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(142, 36, 170, 0.4); }
+  50%       { box-shadow: 0 4px 35px rgba(142, 36, 170, 0.8); }
+}
+
+/* ===== Prestige Modal ===== */
+#prestige-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#prestige-modal.open {
+  display: flex;
+}
+
+.modal-box {
+  background: #0d2137;
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  padding: 2rem;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-box h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.modal-box p {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.modal-box .modal-resets {
+  font-size: 0.82rem;
+  color: var(--red);
+  margin-bottom: 0.5rem;
+}
+
+.modal-box .modal-keeps {
+  font-size: 0.82rem;
+  color: var(--afford);
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-actions .confirm-btn {
+  padding: 0.65rem 1.5rem;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal-actions .cancel-btn {
+  padding: 0.65rem 1.5rem;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--rink-mid);
+  border: 1px solid var(--gold);
+  color: var(--text);
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  z-index: 500;
+  animation: toast-in 0.3s forwards, toast-out 0.4s 2.6s forwards;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  #game-layout {
+    grid-template-columns: 1fr 220px;
+    grid-template-rows: auto auto;
+  }
+  #upgrades-panel {
+    grid-column: 1 / -1;
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 600px) {
+  #game-layout {
+    grid-template-columns: 1fr;
+  }
+  #shop, #upgrades-panel {
+    max-height: 220px;
+  }
+  #stats-bar {
+    gap: 0.8rem;
+    font-size: 0.85rem;
+  }
+  #puck {
+    width: 120px;
+    height: 120px;
+    font-size: 3rem;
+  }
+}

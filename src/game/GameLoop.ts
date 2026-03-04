@@ -41,6 +41,7 @@ export class GameLoop {
       this.state.pucks += earned;
       this.state.totalPucksEarned += earned;
       this.state.checkMilestoneProgression();
+      this.state.checkUpgradeUnlocks();
     }
 
     // Auto-save

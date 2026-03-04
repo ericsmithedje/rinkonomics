@@ -5,18 +5,12 @@ import { format } from '../game/NumberFormatter';
 export class Shop {
   private state: GameState;
   private container: HTMLElement | null = null;
-  private dirtyAffordability = true;
 
   constructor(state: GameState) {
     this.state = state;
     document.addEventListener('gameloop:tick', () => {
-      if (this.dirtyAffordability) {
-        this.updateAffordability();
-        this.dirtyAffordability = false;
-      }
+      this.updateAffordability();
     });
-    document.addEventListener('gamestate:click', () => { this.dirtyAffordability = true; });
-    document.addEventListener('gamestate:purchase', () => { this.dirtyAffordability = true; });
     document.addEventListener('gamestate:milestone', () => this.render());
     document.addEventListener('gamestate:prestige', () => this.render());
   }

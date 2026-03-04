@@ -16,6 +16,7 @@ export class Shop {
       }
     });
     document.addEventListener('gamestate:click', () => { this.dirtyAffordability = true; });
+    document.addEventListener('gamestate:purchase', () => { this.dirtyAffordability = true; });
     document.addEventListener('gamestate:milestone', () => this.render());
     document.addEventListener('gamestate:prestige', () => this.render());
   }

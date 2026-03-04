@@ -117,6 +117,7 @@ export class GameState {
     } else if (upgrade.type === 'generator' && upgrade.targetId) {
       this.generatorMultipliers[upgrade.targetId] = (this.generatorMultipliers[upgrade.targetId] ?? 1) * upgrade.multiplier;
     }
+    document.dispatchEvent(new CustomEvent('gamestate:purchase'));
     return true;
   }
 

@@ -16,6 +16,32 @@ describe('GameState — core mutations', () => {
     expect(state.totalClicks).toBe(1);
   });
 
+  it('addPucks updates pucks and totalPucksEarned', () => {
+    state.addPucks(50);
+    expect(state.pucks).toBeCloseTo(50);
+    expect(state.totalPucksEarned).toBeCloseTo(50);
+  });
+
+  it('addPucks triggers milestone progression', () => {
+    // milestones[1] threshold is 100 pucks earned
+    state.addPucks(200);
+    expect(state.milestoneIndex).toBeGreaterThan(0);
+  });
+
+  it('addPucks triggers upgrade unlock checks', () => {
+    // better-tape-job unlocks at totalPucks >= 1000; carbon-blade at >= 10000
+    state.addPucks(10000);
+    expect(state.availableUpgrades.has('better-tape-job')).toBe(true);
+    expect(state.availableUpgrades.has('carbon-blade')).toBe(true);
+  });
+
+  it('addPucks ignores zero or negative amounts', () => {
+    state.addPucks(0);
+    state.addPucks(-10);
+    expect(state.pucks).toBe(0);
+    expect(state.totalPucksEarned).toBe(0);
+  });
+
   it('buyGenerator deducts cost and increases pps', () => {
     state.pucks = 15;
     const result = state.buyGenerator('stick-boy');

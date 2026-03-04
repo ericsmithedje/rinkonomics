@@ -46,7 +46,7 @@ window.addEventListener('beforeunload', () => SaveManager.save(state));
 if (import.meta.env.DEV) {
   (window as any).debug = {
     state,
-    addPucks: (n: number) => { state.pucks += n; state.totalPucksEarned += n; },
+    addPucks: (n: number) => { state.addPucks(n); },
     clearSave: () => SaveManager.clear(),
   };
 }

@@ -77,7 +77,11 @@ export class GameState {
   // === Mutation Methods ===
 
   addPucks(amount: number): void {
-    this.pucks = Math.max(0, this.pucks + amount);
+    if (amount <= 0) return;
+    this.pucks += amount;
+    this.totalPucksEarned += amount;
+    this.checkMilestoneProgression();
+    this.checkUpgradeUnlocks();
   }
 
   spendPucks(amount: number): boolean {

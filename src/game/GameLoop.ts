@@ -37,10 +37,7 @@ export class GameLoop {
     // Accumulate pps
     const pps = this.state.pucksPerSecond;
     if (pps > 0) {
-      const earned = pps * deltaSeconds;
-      this.state.pucks += earned;
-      this.state.totalPucksEarned += earned;
-      this.state.checkMilestoneProgression();
+      this.state.addPucks(pps * deltaSeconds);
     }
 
     // Auto-save

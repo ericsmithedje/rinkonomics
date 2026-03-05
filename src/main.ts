@@ -13,6 +13,7 @@ async function initUI() {
     { UpgradesPanel },
     { MilestoneDisplay },
     { PrestigeModal },
+    { PrestigeShop },
   ] = await Promise.all([
     import('./ui/ClickTarget'),
     import('./ui/StatsPanel'),
@@ -20,6 +21,7 @@ async function initUI() {
     import('./ui/UpgradesPanel'),
     import('./ui/MilestoneDisplay'),
     import('./ui/PrestigeModal'),
+    import('./ui/PrestigeShop'),
   ]);
 
   new ClickTarget(state).mount();
@@ -28,6 +30,7 @@ async function initUI() {
   new UpgradesPanel(state).mount();
   new MilestoneDisplay(state).mount();
   new PrestigeModal(state).mount();
+  new PrestigeShop(state).mount();
 
   if (state.totalClicks === 0 && state.totalPucksEarned === 0) {
     const tooltip = document.createElement('div');

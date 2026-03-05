@@ -10,6 +10,7 @@ export class StatsPanel {
     document.addEventListener('gameloop:tick', this.render.bind(this));
     document.addEventListener('gamestate:click', this.render.bind(this));
     document.addEventListener('gamestate:prestige', this.render.bind(this));
+    document.addEventListener('gamestate:prestige-purchase', this.render.bind(this));
   }
 
   mount(): void {
@@ -19,7 +20,7 @@ export class StatsPanel {
 
   private render(): void {
     if (!this.container) return;
-    const { pucks, pucksPerClick, pucksPerSecond, championshipRings } = this.state;
+    const { pucks, pucksPerClick, pucksPerSecond, championshipRings, hasEverPrestiged } = this.state;
     const milestone = this.state.currentMilestone;
     const ppcDisplay = format(pucksPerClick);
     const ppsDisplay = format(pucksPerSecond);
@@ -41,7 +42,19 @@ export class StatsPanel {
         <span class="stat-label">Career</span>
         <span class="stat-value" style="font-size:0.85rem">${milestone.title}</span>
       </div>
-      ${championshipRings > 0 ? `<span class="prestige-badge">🏆 ×${(1 + championshipRings * 0.1).toFixed(1)}</span>` : ''}
+      ${championshipRings > 0 ? `
+        <div class="stat">
+          <span class="stat-label">Rings</span>
+          <span class="stat-value" style="color:var(--gold)">🏆 ${championshipRings} <span class="prestige-badge">×${(1 + championshipRings * 0.1).toFixed(1)}</span></span>
+        </div>
+      ` : ''}
     `;
+
+    // Update the persistent prestige shop button (lives outside this container to survive innerHTML replacement)
+    const btn = document.getElementById('prestige-shop-btn') as HTMLButtonElement | null;
+    if (btn) {
+      btn.hidden = !hasEverPrestiged;
+      btn.innerHTML = `⭐ Prestige Shop &nbsp; 🏆 ${format(championshipRings)}`;
+    }
   }
 }

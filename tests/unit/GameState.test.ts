@@ -123,4 +123,136 @@ describe('GameState — prestige', () => {
     expect(state.prestige()).toBe(false);
     expect(state.championshipRings).toBe(0);
   });
+
+  it('prestige preserves purchasedPrestigeUpgrades', () => {
+    const state = new GameState();
+    state.milestoneIndex = 7;
+    state.championshipRings = 5;
+    state.buyPrestigeUpgrade('buy-10');
+    state.prestige();
+    expect(state.purchasedPrestigeUpgrades.has('buy-10')).toBe(true);
+  });
+
+  it('prestige preserves prestigeClickMultiplier', () => {
+    const state = new GameState();
+    state.milestoneIndex = 7;
+    state.championshipRings = 10;
+    state.buyPrestigeUpgrade('power-wrist-shot');
+    expect(state.prestigeClickMultiplier).toBe(2);
+    state.prestige();
+    expect(state.prestigeClickMultiplier).toBe(2);
+  });
+
+  it('prestige preserves prestigeGeneratorMultipliers', () => {
+    const state = new GameState();
+    state.generators['stick-boy'] = 50;
+    state.championshipRings = 5;
+    state.buyPrestigeUpgrade('tier3-stick-boy');
+    expect(state.prestigeGeneratorMultipliers['stick-boy']).toBe(2);
+    state.milestoneIndex = 7;
+    state.prestige();
+    expect(state.prestigeGeneratorMultipliers['stick-boy']).toBe(2);
+  });
+});
+
+describe('GameState — prestige multipliers in derived values', () => {
+  it('pucksPerClick includes prestigeClickMultiplier', () => {
+    const state = new GameState();
+    const basePpc = state.pucksPerClick;
+    state.prestigeClickMultiplier = 2;
+    expect(state.pucksPerClick).toBeCloseTo(basePpc * 2);
+  });
+
+  it('pucksPerClick stacks prestigeClickMultiplier with clickMultiplier', () => {
+    const state = new GameState();
+    state.clickMultiplier = 3;
+    state.prestigeClickMultiplier = 2;
+    // baseClickValue(1) * clickMultiplier(3) * prestigeClickMultiplier(2) * prestigeMultiplier(1)
+    expect(state.pucksPerClick).toBeCloseTo(6);
+  });
+
+  it('pucksPerSecond includes prestigeGeneratorMultipliers', () => {
+    const state = new GameState();
+    state.generators['stick-boy'] = 1; // 0.1 pps base
+    const ppsBefore = state.pucksPerSecond;
+    state.prestigeGeneratorMultipliers['stick-boy'] = 2;
+    expect(state.pucksPerSecond).toBeCloseTo(ppsBefore * 2);
+  });
+});
+
+describe('GameState — buyPrestigeUpgrade', () => {
+  it('deducts rings and adds to purchasedPrestigeUpgrades', () => {
+    const state = new GameState();
+    state.championshipRings = 3;
+    const result = state.buyPrestigeUpgrade('buy-10');
+    expect(result).toBe(true);
+    expect(state.championshipRings).toBe(2); // 3 - 1 = 2
+    expect(state.purchasedPrestigeUpgrades.has('buy-10')).toBe(true);
+  });
+
+  it('applies click multiplier for click-power upgrades', () => {
+    const state = new GameState();
+    state.championshipRings = 5;
+    state.buyPrestigeUpgrade('power-wrist-shot');
+    expect(state.prestigeClickMultiplier).toBe(2);
+  });
+
+  it('dispatches gamestate:prestige-purchase event', () => {
+    const state = new GameState();
+    state.championshipRings = 5;
+    const listener = vi.fn();
+    document.addEventListener('gamestate:prestige-purchase', listener, { once: true });
+    state.buyPrestigeUpgrade('buy-10');
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns false and does not deduct rings when insufficient', () => {
+    const state = new GameState();
+    state.championshipRings = 0;
+    const result = state.buyPrestigeUpgrade('buy-10'); // costs 1
+    expect(result).toBe(false);
+    expect(state.championshipRings).toBe(0);
+  });
+
+  it('returns false if already owned', () => {
+    const state = new GameState();
+    state.championshipRings = 10;
+    state.buyPrestigeUpgrade('buy-10');
+    const secondResult = state.buyPrestigeUpgrade('buy-10');
+    expect(secondResult).toBe(false);
+    expect(state.championshipRings).toBe(9); // only deducted once
+  });
+
+  it('returns false for generator-tier upgrade when below ownership threshold', () => {
+    const state = new GameState();
+    state.championshipRings = 10;
+    state.generators['stick-boy'] = 49; // needs 50
+    const result = state.buyPrestigeUpgrade('tier3-stick-boy');
+    expect(result).toBe(false);
+    expect(state.championshipRings).toBe(10); // no rings deducted
+  });
+
+  it('applies generator multiplier for generator-tier upgrades', () => {
+    const state = new GameState();
+    state.generators['stick-boy'] = 50;
+    state.championshipRings = 5;
+    state.buyPrestigeUpgrade('tier3-stick-boy');
+    expect(state.prestigeGeneratorMultipliers['stick-boy']).toBe(2);
+  });
+
+  it('hasBulkBuy10 becomes true after buying buy-10', () => {
+    const state = new GameState();
+    expect(state.hasBulkBuy10).toBe(false);
+    state.championshipRings = 5;
+    state.buyPrestigeUpgrade('buy-10');
+    expect(state.hasBulkBuy10).toBe(true);
+  });
+
+  it('hasBuyMax becomes true after buying buy-max', () => {
+    const state = new GameState();
+    expect(state.hasBuyMax).toBe(false);
+    state.championshipRings = 5;
+    state.buyPrestigeUpgrade('buy-max');
+    expect(state.hasBuyMax).toBe(true);
+  });
 });

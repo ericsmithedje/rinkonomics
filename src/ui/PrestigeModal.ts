@@ -65,7 +65,8 @@ export class PrestigeModal {
     if (!this.modal) return;
     const preview = this.modal.querySelector<HTMLElement>('#prestige-multiplier-preview');
     if (preview) {
-      const newRings = this.state.championshipRings + 1;
+      const ringsEarned = this.state.computeRingsFromPrestige(this.state.totalPucksEarned);
+      const newRings = this.state.championshipRings + ringsEarned;
       const newMult = 1 + newRings * 0.1;
       preview.textContent = `After this reset: ×${newMult.toFixed(1)} production multiplier (${newRings} ring${newRings !== 1 ? 's' : ''})`;
       preview.style.cssText = 'color: var(--gold); font-size: 0.85rem; margin-bottom: 1rem;';

@@ -169,6 +169,7 @@ export class GameState {
     if (!this.spendPucks(cost)) return false;
     this.generators[id]++;
     this.checkUpgradeUnlocks();
+    document.dispatchEvent(new CustomEvent('gamestate:purchase'));
     return true;
   }
 

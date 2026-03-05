@@ -1,50 +1,41 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Rinkonomics Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Single Source of Truth
+`GameState` is the one and only instance of game state. All game logic mutates this shared instance. **Never create a second `GameState`; never clone or copy it for UI purposes.** UI components receive a reference, not a snapshot.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Event-Driven UI (No Direct Coupling)
+UI components MUST NOT call `GameState` methods directly in response to game loop activity. All UI updates are driven by DOM `CustomEvent`s dispatched on `document`. New UI side-effects MUST subscribe to an existing event or justify a new event in the spec/plan.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Data-First Content
+All game content (generators, upgrades, milestones, prestige upgrades) lives in `src/data/` as plain arrays with lookup Maps. Adding a new item MUST mean adding an entry to a data array — never hardcoding content into game logic or UI.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. TypeScript Strictness (NON-NEGOTIABLE)
+All code compiles with zero errors under the project's strict `tsconfig.json`. Type-only imports MUST use `import type`. No `any`, no type assertions without justification. `verbatimModuleSyntax` is enforced.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Test Coverage for Game Logic
+Every new `GameState` method and data-driven behavior MUST have a unit test in `tests/unit/`. Integration flows (purchase → state change → event) MUST have a test in `tests/integration/`. Tests run with Vitest + jsdom.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### VI. No Runtime Dependencies
+The project has no runtime npm dependencies — only devDependencies (Vite, Vitest, TypeScript). New features MUST be implemented without adding runtime packages.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### VII. Simplicity & Incremental Change
+Prefer the smallest change that works. Don't refactor unrelated code while implementing a feature. Each spec/plan/task set MUST represent one focused increment of functionality.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Quality Gates
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Every feature MUST pass before merging to `main`:
+- `npm run build` succeeds (tsc type-check + Vite build)
+- `npm test` passes (all Vitest tests green)
+- No new TypeScript errors introduced
+
+## Deployment
+
+GitHub Actions builds and deploys to GitHub Pages on push to `main`. Vite `base` is set to `/rinkonomics/`. Asset paths must remain compatible with this subdirectory deployment.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes individual preferences and file-level comments. If a principle needs to change, update this file explicitly with a note on why — do not silently deviate from it.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-03-05 | **Last Amended**: 2026-03-05

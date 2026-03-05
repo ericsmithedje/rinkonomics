@@ -86,9 +86,7 @@ export class Shop {
     this.container.querySelectorAll<HTMLButtonElement>('.buy-btn:not(.buy-btn-bulk)').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.genId!;
-        if (state.buyGenerator(id)) {
-          this.render();
-        }
+        state.buyGenerator(id);
       });
     });
 
@@ -96,9 +94,7 @@ export class Shop {
     this.container.querySelectorAll<HTMLButtonElement>('.buy-btn-bulk[data-bulk="10"]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.genId!;
-        if (state.buyGeneratorBulk(id, 10)) {
-          this.render();
-        }
+        state.buyGeneratorBulk(id, 10);
       });
     });
 
@@ -107,9 +103,7 @@ export class Shop {
       btn.addEventListener('click', () => {
         const id = btn.dataset.genId!;
         const qty = state.generatorMaxAffordable(id);
-        if (qty > 0 && state.buyGeneratorBulk(id, qty)) {
-          this.render();
-        }
+        if (qty > 0) state.buyGeneratorBulk(id, qty);
       });
     });
   }
@@ -117,8 +111,8 @@ export class Shop {
   private updateAffordability(): void {
     if (!this.container) return;
     const { state } = this;
-    if (state.pucks === this.lastPucksForAffordability) return;
-    this.lastPucksForAffordability = state.pucks;
+    if (Math.floor(state.pucks) === this.lastPucksForAffordability) return;
+    this.lastPucksForAffordability = Math.floor(state.pucks);
 
     // Update ×1 buttons
     this.container.querySelectorAll<HTMLButtonElement>('.buy-btn:not(.buy-btn-bulk)').forEach((btn) => {

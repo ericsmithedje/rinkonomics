@@ -524,7 +524,7 @@ button.buy-btn-bulk.unaffordable {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.72);
-  z-index: 200;
+  z-index: 900;
   display: flex;
   align-items: flex-start;
   justify-content: center;

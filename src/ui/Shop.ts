@@ -5,6 +5,7 @@ import { format } from '../game/NumberFormatter';
 export class Shop {
   private state: GameState;
   private container: HTMLElement | null = null;
+  private lastPucksForAffordability = -1;
 
   constructor(state: GameState) {
     this.state = state;
@@ -116,6 +117,8 @@ export class Shop {
   private updateAffordability(): void {
     if (!this.container) return;
     const { state } = this;
+    if (state.pucks === this.lastPucksForAffordability) return;
+    this.lastPucksForAffordability = state.pucks;
 
     // Update ×1 buttons
     this.container.querySelectorAll<HTMLButtonElement>('.buy-btn:not(.buy-btn-bulk)').forEach((btn) => {

@@ -198,14 +198,6 @@ html, body {
   color: var(--text-dim);
 }
 
-.generator-count {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--gold);
-  min-width: 2rem;
-  text-align: center;
-}
-
 /* ===== Buttons ===== */
 button.buy-btn {
   padding: 0.35rem 0.7rem;

@@ -1,6 +1,7 @@
 import type { GameState } from '../game/GameState';
 import { prestigeUpgrades } from '../data/prestigeUpgrades';
 import { format } from '../game/NumberFormatter';
+import { SaveManager } from '../game/SaveManager';
 
 const TYPE_ORDER = ['bulk-buy', 'click-power', 'generator-tier'] as const;
 const TYPE_LABELS: Record<string, string> = {
@@ -56,6 +57,7 @@ export class PrestigeShop {
         const buyBtn = target.closest<HTMLButtonElement>('.prestige-buy-btn:not([disabled])');
         if (buyBtn?.dataset.upgId) {
           this.state.buyPrestigeUpgrade(buyBtn.dataset.upgId);
+          SaveManager.save(this.state);
         }
       });
     }

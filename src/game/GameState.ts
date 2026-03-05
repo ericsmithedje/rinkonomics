@@ -276,7 +276,7 @@ export class GameState {
 
   serialize(): SerializedGameState {
     return {
-      saveVersion: 2,
+      saveVersion: this.saveVersion,
       pucks: this.pucks,
       totalPucksEarned: this.totalPucksEarned,
       totalClicks: this.totalClicks,
@@ -297,7 +297,7 @@ export class GameState {
 
   static hydrate(data: Partial<SerializedGameState>): GameState {
     const state = new GameState();
-    state.saveVersion = 2;
+    state.saveVersion = data.saveVersion ?? state.saveVersion;
     state.pucks = data.pucks ?? 0;
     state.totalPucksEarned = data.totalPucksEarned ?? 0;
     state.totalClicks = data.totalClicks ?? 0;
